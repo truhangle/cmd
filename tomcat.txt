@@ -1,0 +1,43 @@
+[增大tomcat的内存]
+-------------------------------------------------------------------
+打开catalina.sh,在文件开头增加两行:
+JAVA_OPTS='-Xms128m -Xmx512m  -XX:PermSize=128M -XX:MaxPermSize=256M'
+CATALINA_HOME=/usr/tomcat/
+
+
+[远程调试tomcat]
+(2).打开目录下的catalina.sh文件，找到JPDA_ADDRESS=”8000”，8000代表远程调试端口
+(1).进入tomcat的bin目录，输入./catalina.sh jpda run或者./catalina.sh jpda start命令启动tomcat
+(1).在需要远程调试的类中选择Debug Configurations菜单打开配置界面，如下图：
+	./catalina.sh jpda start;tail -f ../logs/catalina.out
+
+[unknow host error]
+查看/etc/sysconfig/network 和 /etc/hosts文件
+将network中的主机名设置到hosts中
+
+
+[开机启动]
+#!/bin/bash  
+# description: Tomcat Start Stop Restart  
+# processname: tomcat  
+# chkconfig: 234 20 80  
+JAVA_HOME=/usr/java/jdk1.7.0_80
+export JAVA_HOME  
+PATH=$JAVA_HOME/bin:$PATH
+export PATH  
+CATALINA_HOME=/usr/local/tomcat-admin/
+
+case $1 in
+start)
+sh $CATALINA_HOME/bin/startup.sh
+;;
+stop)
+sh $CATALINA_HOME/bin/shutdown.sh
+;;
+restart)
+sh $CATALINA_HOME/bin/shutdown.sh
+sh $CATALINA_HOME/bin/startup.sh
+;;
+esac
+exit 0
+

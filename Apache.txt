@@ -1,0 +1,37 @@
+Apache在Linux系统中，其实叫“httpd”，它“无耻的”占据了官方名义！
+CentOS可以使用yum命令，非常简单和容易的安装Apache，下面演示一下步骤：
+
+1、安装Apache
+yum install httpd
+
+2、设置Apache服务的启动级别
+chkconfig --levels 235 httpd on
+Apache是一个服务，所以，可以通过设置服务的启动级别来让它启动。2，3，5三个级别分别表示什么意思就不用我多说了吧。
+
+3、现在就启动它
+/etc/init.d/httpd start
+
+安装之后的说明：
+
+Apache在Linux系统中，其实叫“httpd”，它“无耻的”占据了官方名义！
+CentOS可以使用yum命令，非常简单和容易的安装Apache，下面演示一下步骤：
+
+1、安装Apache
+yum install httpd
+
+2、设置Apache服务的启动级别
+chkconfig --levels 235 httpd on
+Apache是一个服务，所以，可以通过设置服务的启动级别来让它启动。2，3，5三个级别分别表示什么意思就不用我多说了吧。
+
+3、现在就启动它
+/etc/init.d/httpd start
+
+安装之后的说明：
+
+1、验证是否安装成功
+现在打开http://ip地址，看看有没有Apache的默认页面出来了？如果有就对了。
+
+2、安装目录介绍
+Apache默认将网站的根目录指向/var/www/html 目录 
+默认的主配置文件是/etc/httpd/conf/httpd.conf
+配置存储在的/etc/httpd/conf.d/目录

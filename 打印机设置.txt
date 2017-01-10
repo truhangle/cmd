@@ -1,0 +1,20 @@
+
+点开电脑左下角的“开始”--运行---，
+输入services.msc回车，打开服务设置
+将以下服务的[启动类型]选为[自动]，并确保[服务状态]为[已启动]
+Server 
+Workstation
+Computer Browser
+DHCP Client
+Remote Procedure Call
+Remote Procedure Call (RPC) Locator
+DNS Client
+Function Discovery Resource Publication
+UPnP Device Host
+SSDP Discovery
+TIP/IP NetBIOSHelper  //这个在xp系统没有开启,win7共享需要开启
+接着，在右下角的网络连接图标里右键（中间那个），选“打开网络和共享中心”
+出来界面后，在界面左上选”更改高级共享设置“，选住”启用网络发现“，”启用文件和打印机共享“保存修改OK。
+
+做完这些。最好重启一下。然后再次连接。连接共享的电脑都是同一系统位数吧。
+若还是出现你所的情况，去把打印机电脑上的杀软，卫士通通关闭。再注意看一下防火墙是不是自动又关了。

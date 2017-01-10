@@ -1,0 +1,97 @@
+#######
+#二进制安装mysql
+#######
+#检查mysql是否安装#
+yum list installed mysql*
+rpm -qa | grep mysql*
+
+#mysql删除#
+rpm -e mysql*
+yum remove 包名
+
+#http://dev.mysql.com/downloads/mysql/
+#下载mysql二进制版（mysql-5.6.31-linux-glibc2.5-x86_64.tar.gz）（根据系统位数选择）
+
+#上传服务器#
+mkdir /usr/local/mysql-5.6.31
+tar xvzf mysql-5.7.9-linux-glibc2.5-x86_64.tar.gz -C /usr/local/mysql-5.6.31
+解压之后为：/usr/local/mysql-5.6.31/mysql-5.7.9-linux-glibc2.5-x86_64
+cd mysql-5.7.9-linux-glibc2.5-x86_64
+mv * ../
+rm -rf mysql-5.7.9-linux-glibc2.5-x86_64
+
+cd /usr/local/mysql-5.6.31
+shell> groupadd mysql
+shell> useradd -r -g mysql -s /bin/false mysql
+shell> chown -R mysql .
+shell> chgrp -R mysql .
+shell> scripts/mysql_install_db --user=mysql
+shell> chown -R root .
+shell> chown -R mysql data
+# Next command is optional
+shell> cp support-files/mysql.server /etc/init.d/mysql.server
+
+#设置环境变量#
+shell> export PATH=$PATH:/usr/local/mysql/bin
+
+#修改配置文件#
+=====================================
+#vi /etc/my.cnf
+
+[client]
+#password = your_password
+port = 3306
+socket = /tmp/mysql.sock
+ 
+# Here follows entries for some specific programs
+ 
+# The MariaDB server
+[mysqld]
+basedir=/usr/local/mysql-5.6.31
+datadir=/usr/local/mysql-5.6.31/data
+socket=/tmp/mysql.sock
+ 
+#set innodb_buffer_pool_size is 1G
+innodb_buffer_pool_size=10737418240
+#wait_timeout_seting
+interactive_timeout=3600
+wait_timeout=3600
+innodb_lock_wait_timeout=20
+innodb_log_file_size=500M
+max_tmp_tables=100
+innodb_flush_method=O_DIRECT
+innodb_strict_mode=1
+max_connections=1000
+wait_timeout=180
+character-set-server=utf8
+server-id=1
+log_bin
+binlog_format = row
+expire_logs_days=7
+innodb_file_per_table=1
+event_scheduler=1
+skip-name-resolve
+lower_case_table_names=1
+explicit_defaults_for_timestamp
+=====================================
+
+#mysql初始化#
+mysqld --defaults-file=/etc/my.cnf --initialize-insecure --user=mysql  --basedir=/usr/local/mysql-5.6.31 --datadir=/usr/local/mysql-5.6.31/data
+
+ #将 mysql 加入开机启动#
+chmod +x /etc/init.d/mysqld
+chkconfig --add mysqld
+chkconfig --level 345 mysqld on
+
+#启动mysql#
+shell> /usr/local/mysql-5.6.31/bin/mysqld_safe --user=mysql &
+
+#更新root信息#
+mysql> use mysql;
+mysql> update mysql.user set password=PASSWORD('密码') where User='root';
+mysql> grant all privileges on *.* to root@'%' identified by '密码' with grant option;
+mysql> flush privileges;
+
+#检查字符串设置#
+SHOW VARIABLES LIKE 'character_set_%';
+SHOW VARIABLES LIKE 'collation_%';

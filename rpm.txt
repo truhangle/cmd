@@ -1,0 +1,2 @@
+#检查软件安装
+	rpm -qa | grep mysql

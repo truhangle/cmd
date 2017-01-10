@@ -1,0 +1,78 @@
+
+文件：/etc/sysconfig/iptables
+
+service iptables status可以查看到iptables服务的当前状态。
+但是即使服务运行了,防火墙也不一定起作用,你还得看防火墙规则的设置 iptables -L
+在此说一下关于启动和关闭防火墙的命令:
+1) 重启后生效
+开启： chkconfig iptables on
+关闭： chkconfig iptables off
+2) 即时生效，重启后失效
+开启： service iptables start
+关闭： service iptables stop
+查看： iptables -L -n
+====================
+公司的产品一直运行在云服务器上，从而有幸接触过aws的ec2，盛大的云服务器，最近准备有使用阿里云的弹性计算（云服务器）。前两种云服务器在安全策略这块做的比较好，提供简单明了的配置界面，而且给了默认的安全策略，反观阿里云服务器，安全策略需要自己去配置，甚至centos机器上都没有预装iptables（起码我们申请两台上都没有），算好可以使用yum来安装，安装命令如下：
+
+yum install -y iptables
+iptables安装好后就可以来配置规则了。由于作为web服务器来使用，所以对外要开放 80 端口，另外肯定要通过ssh进行服务器管理，22 端口也要对外开放，当然最好是把ssh服务的默认端口改掉，在公网上会有很多人试图破解密码的，如果修改端口，记得要把该端口对外开发，否则连不上就悲剧了。下面提供配置规则的详细说明：
+
+第一步：清空所有规则
+
+当Chain INPUT (policy DROP)时执行/sbin/iptables -F后，你将和服务器断开连接
+所有在清空所有规则前把policy DROP该为INPUT，防止悲剧发生，小心小心再小心
+/sbin/iptables -P INPUT ACCEPT
+清空所有规则
+/sbin/iptables -F
+/sbin/iptables -X
+计数器置0
+/sbin/iptables -Z
+
+第二步：设置规则
+
+允许来自于lo接口的数据包，如果没有此规则，你将不能通过127.0.0.1访问本地服务，例如ping 127.0.0.1
+/sbin/iptables -A INPUT -i lo -j ACCEPT 
+
+开放TCP协议22端口，以便能ssh，如果你是在有固定ip的场所，可以使用 -s 来限定客户端的ip
+/sbin/iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+开放TCP协议80端口供web服务
+/sbin/iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
+10.241.121.15是另外一台服务器的内网ip，由于之间有通信，接受所有来自10.241.121.15的TCP请求
+/sbin/iptables -A INPUT -p tcp -s 10.241.121.15 -j ACCEPT
+
+接受ping
+/sbin/iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+
+这条规则参看：http://www.netingcn.com/iptables-localhost-not-access-internet.html
+/sbin/iptables -A INPUT -m state --state ESTABLISHED -j ACCEPT
+
+屏蔽上述规则以为的所有请求，不可缺少，否则防火墙没有任何过滤的功能
+/sbin/iptables -P INPUT DROP
+
+可以使用 iptables -L -n 查看规则是否生效
+至此防火墙就算配置好，但是这是临时的，当重启iptables或重启机器，上述配置就会被清空，要想永久生效，还需要如下操作：
+
+/etc/init.d/iptables save   
+或
+service iptables save
+
+执行上述命令可以在文件 /etc/sysconfig/iptables 中看到配置
+以下提供一个干净的配置脚本：
+
+/sbin/iptables -P INPUT ACCEPT
+/sbin/iptables -F
+/sbin/iptables -X
+/sbin/iptables -Z
+
+/sbin/iptables -A INPUT -i lo -j ACCEPT 
+/sbin/iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+/sbin/iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+/sbin/iptables -A INPUT -p tcp -s 10.241.121.15 -j ACCEPT
+/sbin/iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+/sbin/iptables -A INPUT -m state --state ESTABLISHED -j ACCEPT
+/sbin/iptables -P INPUT DROP
+最后执行 service iptables save ，先确保ssh连接没有问题，防止规则错误，导致无法连上服务器，因为没有save，重启服务器规则都失效，否则就只有去机房才能修改规则了。也可以参考：ubuntu iptables 配置脚本来写一个脚本。
+
+最后再次提醒，在清空规则之前一定要小心，确保Chain INPUT (policy ACCEPT)。

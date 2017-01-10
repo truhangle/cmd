@@ -1,0 +1,5 @@
+[ns查看]
+	nslookup test.zundai.com
+
+[查看局域网IP]
+apr -a

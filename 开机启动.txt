@@ -1,0 +1,10 @@
+可以将apache、mysql、samba、svn等这些服务的开机自启动问题一起搞定：
+1、编辑rc.local文件
+#vi /etc/rc.d/rc.local
+2、加入如下启动命令
+/usr/sbin/apachectl start
+/etc/rc.d/init.d/mysqld start
+/etc/rc.d/init.d/smb start
+/usr/local/subversion/bin/svnserve -d
+3、注意：我的这个路径是yum安装这些服务得到的路径，填写时要根据自己的安装路径，找不到可以借助find命令，主要是找到apachectl 、mysqld 、smb 这三个启动文件。
+4、注意：svn不是yum安装的，找到你的安装目录中bin目录下的svnserve这个启动文件。

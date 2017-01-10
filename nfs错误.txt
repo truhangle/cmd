@@ -1,0 +1,28 @@
+NFS报错一例
+
+[root@bjs0- ~]# /etc/init.d/portreserve start
+Starting portreserve: [ OK ]
+[root@bjs0- ~]# /etc/init.d/nfs start
+Starting NFS services: [ OK ]
+Starting NFS quotas: Cannot register service: RPC: Unable to receive; errno = Connection refused
+rpc.rquotad: unable to register (RQUOTAPROG, RQUOTAVERS, udp).
+[FAILED]
+Starting NFS mountd: [FAILED]
+Starting NFS daemon: rpc.nfsd: writing fd to kernel failed: errno 111 (Connection refused)
+rpc.nfsd: unable to set any sockets for nfsd
+[FAILED]
+
+RH系操作系统在6.0版本之后没有portmap服务控制rpc的启动，由于NFS和nfslock的启动需要向rpc进行注册，rpc不启动的话就会报错。
+
+解决方法：启动rpcbind&rpcidmap rpcbind是6.0版本后默认的RPC服务，所以要先于nfs启动。如果不启动rpcidmap则会造成用户权限的映射错误，用户的权限看起来是一串数字。
+
+
+[root@bjs0- ~]# /etc/init.d/rpcbind start
+Starting rpcbind: [ OK ]
+[root@bjs0- ~]# /etc/init.d/rpcidmapd start
+Starting RPC idmapd: [ OK ]
+[root@bjs0- ~]# /etc/init.d/nfs start
+Starting NFS services: [ OK ]
+Starting NFS quotas: [ OK ]
+Starting NFS mountd: [ OK ]
+Starting NFS daemon: [ OK ]

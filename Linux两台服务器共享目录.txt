@@ -1,0 +1,32 @@
+两台服务器共享目录
+1、检查nfs服务
+	service nfs status
+ 如果unrecognized service
+
+2、安装nfs
+	yum install nfs是无法安装的，应该用yum install nfs-utils
+
+3、启动nfs,按顺序启动
+[root@bjs0- ~]# /etc/init.d/rpcbind start
+Starting rpcbind: [ OK ]
+[root@bjs0- ~]# /etc/init.d/rpcidmapd start
+Starting RPC idmapd: [ OK ]
+[root@bjs0- ~]# /etc/init.d/nfs start
+
+目标：在Linux服务器B上访问服务器A上指定的文件系统
+
+首先要配置服务器A
+
+编辑/etc/exports,加入:
+
+/home    192.168.1.1(rw,sync,no_root_squash)    #IP是服务器B的地址, 目录是要共享出的目录
+
+到服务器B上就可以挂载了
+
+mount 192.168.1.1:/home /mnt
+(把mount这行加入到/etc/rc.local，开机就会自动挂载了)
+
+
+进入服务器B的/mnt目录就可以看到服务器A上的/home目录的内容了
+
+这样就可以在服务器B上像访问本地目录一样访问服务器A的目录了

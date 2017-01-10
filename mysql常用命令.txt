@@ -1,0 +1,199 @@
+[安装mysql]
+1、安装yum源:
+	mysql-community-release-el6-5.noarch.rpm
+	
+2、查看CentOS自带mysql是否已安装。
+	输入：yum list installed | grep mysql
+
+4、查看yum库上的mysql版本信息(CentOS系统需要正常连接网络)。
+	输入：yum list | grep mysql 或 yum -y list mysql*
+
+3、若有自带安装的mysql，如何卸载CentOS系统自带mysql数据库？
+	输入：yum -y remove mysql-libs.x86_64，若有多个依赖文件则依次卸载。
+
+5、使用yum安装mysql数据库。
+	输入：yum -y install mysql-server mysql mysql-devel ，命令将：mysql-server、mysql、mysql-devel都安装好，当结果显示为“Complete！”即安装完毕。
+注：安装mysql只是安装了数据库，只有安装mysql-server才相当于安装了客户端。
+作为服务器端只需要执行:
+
+6、启动mysql:/etc/init.d/mysqld start
+
+7、修改root密码:
+	mysqladmin -u root password 'root'　　// 通过该命令给root账号设置密码为 root
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('newpass');
+
+[导出数据]
+#导出某个数据库的表－－结构+数据+函数+存储过程
+mysqldump -uroot -pxxxxxx --opt -R sp2p > /data/sql.sql
+
+==================================================================================================
+[mysql安装]
+rpm 安装5.6一直报找不到mysql.sock文件
+安装前一定要清理掉已存在的mysql lib
+提示找不到的话，就mysql restart一下
+
+
+service mysql restart
+service mysqld status
+service mysqld stop
+
+设置编码
+SHOW VARIABLES LIKE 'character_set_%';
+SHOW VARIABLES LIKE 'collation_%';
+
+一、启动方式
+
+　　1、使用 service 启动：service mysqld start
+
+　　2、使用 mysqld 脚本启动：/etc/inint.d/mysqld start
+
+　　3、使用 safe_mysqld 启动：safe_mysqld&
+
+　　二、停止
+
+　　1、使用 service 启动：service mysqld stop
+
+　　2、使用 mysqld 脚本启动：/etc/inint.d/mysqld stop
+
+　　3、mysqladmin shutdown
+
+　　三、重启
+
+　　1、使用 service 启动：service mysqld restart
+
+　　2、使用 mysqld 脚本启动：/etc/inint.d/mysqld restart
+
+　　提问 编辑摘要
+
+　　如何启动/停止/重启MySQL
+
+一、启动方式
+
+	1、使用 service 启动：service mysqld start
+
+　　2、使用 mysqld 脚本启动：/etc/inint.d/mysqld start
+
+　　3、使用 safe_mysqld 启动：safe_mysqld&
+
+二、停止
+	1、使用 service 启动：service mysqld stop
+	2、使用 mysqld 脚本启动：/etc/inint.d/mysqld stop
+	3、mysqladmin shutdown
+
+三、重启
+	1、使用 service 启动：service mysqld restart
+	2、使用 mysqld 脚本启动：/etc/inint.d/mysqld restart
+
+　　刚开始学mysql时都是用redhat自带的。启动是什么 /rc.d/init.d/ start
+
+　　这很简单，但是后来越学越多，系统自带的mysql，有的是版本太低，有的是与
+
+　　自己想要装的web服务需要的低版本的mysql
+
+　　后来自己学着以tar的方式安装mysql，我的mysql装在/usr/local/mysql目录下启
+
+　　动碰到过很多问题。最常见的是：
+
+　　ERROR 2002: Can't connect to local MySQL server through socket
+
+　　'/tmp/mysql.sock' (111)
+
+　　解决办法：
+
+　　[root@test mysql]# /usr/local/mysql/bin/mysqladmin -u root /
+
+　　> -S /var/lib/mysql/mysql.sock password 'your.passwd'
+
+　　或者做个连接
+
+　　ln -s /var/lib/mysql/mysql.sock /tmp
+
+　　其实提示找不到 /tmp/mysql.sock有时也并不是/tmp目录下没这个文件，是启动
+
+　　命令不对，我碰到过
+
+　　常见的几种启动方式，自己也不是记得很清楚，如果你确定tmp下有mysql.sock这
+
+　　个文件不妨试试另外的几个命令
+
+　　/usr/local/mysql/bin/mysql -u root -p
+
+　　/usr/local/mysql/bin/mysqld --user=mysql&
+
+　　/usr/local/mysql/bin/mysqld --user=root&
+
+　　/usr/local/mysql/bin/mysqld_safe --user=root&
+
+　　/usr/local/mysql/bin/mysqld_safe --user=mysql&
+
+　　/usr/local/mysql/bin/safe_mysqld--uer=root&(注意safe_mysqld与mysqld_safe是不同的，&表示mysql在后台运行)我的就会报错了
+
+　　STOPPING server from pid file
+
+　　/usr/local/mysql/data/localhost.localdomain.pid
+
+　　060304 11:46:21 mysqld ended
+
+　　这是权限问题，我的mysql目录属于root用户，也属于root群组，改用mysqld_safe启动就没问题了，
+
+　　大家只要注意这几个mysql,safe_mysqld,mysqld_safe,mysqld,mysqladmin.多试
+
+　　几次
+
+　　其实有时mysql已经正常启动了，查看mysql是否启动命令
+
+　　ps -aux | grep mysqld
+
+　　会看到如下类似内容
+
+　　mysql 6394 0.0 1.5 10528 992 pts/3 S 16:16 0:00
+
+　　/usr/local/mysql/
+
+　　mysql 6395 0.0 1.5 10528 992 pts/3 S 16:16 0:00
+
+　　/usr/local/mysql/
+
+　　mysql 6396 0.0 1.5 10528 992 pts/3 S 16:16 0:00
+
+　　/usr/local/mysql/
+
+　　root 6422 0.0 1.1 2408 732 pts/3 S 16:20 0:00 grep
+
+　　mysql
+
+　　查看mysql是否在监听端口命令
+
+　　netstat -tl | grep mysql
+
+　　会看到如下类似内容
+
+　　tcp 0 0 *:mysql *:* LISTEN
+
+[导出数据]
+	#导出所有数据库结构视图表函数：
+	mysqldump -uroot -pwsjr2016 --opt -R sp2p > /upload/sql/sql.sql
+
+[导入数据]
+	source /tmp/db.all.sql;
+
+[安全创建FUNCTION]
+	error:you *might* want to use the less safe log_bin_trust_function_creators variable 
+	mysql> show variables like 'log_bin_trust_function_creators';
+	mysql> set global log_bin_trust_function_creators=1;
+
+[快速复制数据库]
+假设已经存在的数据库名字叫db1，想要复制一份，命名为newdb。步骤如下：
+
+1. 首先创建新的数据库newdb
+
+#mysql -u root -ppassword
+mysql>CREATE DATABASE `newdb` DEFAULT CHARACTER SET UTF8 COLLATE UTF8_GENERAL_CI;
+2. 使用mysqldump及mysql的命令组合，一次性完成复制
+
+#mysqldump db1 -u root -ppassword --add-drop-table | mysql newdb -u root -ppassword
+（注意-ppassword参数的写法：-p后面直接跟密码，中间没有空格)
+
+以上是在同一台MySQL服务器上复制数据库的方法。如果要复制到远程另一台MySQL服务器上，可以使用mysql的“ -h 主机名/ip”参数。前提是mysql允许远程连接，且远程复制的传输效率和时间可以接受。
+
+#mysqldump db1 -uroot -ppassword --add-drop-table | mysql -h 192.168.1.22 newdb -u root -ppassword

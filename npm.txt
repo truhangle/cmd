@@ -1,0 +1,4 @@
+[npm 软链]
+	1. `$ git clone URL` 进入`cd rui` 。
+	2. 运行命令 `npm link` 添加软链，就相当于全局安装`rui`。
+	3. 进入要使用的项目 `npm link rui` 在该项目中进行添加软链，此时可以在项目中引用。

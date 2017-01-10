@@ -1,0 +1,23 @@
+【打包】
+	=================================================
+设置环境变量，制定JDK
+	set JAVA_HOME=C:\Program Files\Java\jdk1.6.0_45
+	echo %JAVA_HOME%
+编译命令：play war com.shovesoft.sp2p --exclude .svn:target:logs:tmp -o sp2p
+说明：“play war”，play框架打war包命令。
+	  “com.shovesoft.sp2p”，编译前项目路径（这里是相对路径）。
+	   “sp2p”，编译后项目路径（相对路径）。
+常见编译报错处理：①删除原项目中的tmp、precompiled文件夹。
+				  ②配置application.conf中的jvm.memory：
+jvm.memory=-Xmx1024m -Xms1024m -XX:PermSize=256m -XX:MaxPermSize=512m
+
+
+[导入eclipse]
+	play eclipsify com.shovesoft.sp2p --exclude .svn:target:logs:tmp
+
+
+[官方网站]
+https://www.playframework.com/documentation
+
+
+play war com.zundai --exclude .svn:target:logs:tmp -o zundai.war

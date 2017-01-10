@@ -1,0 +1,11 @@
+
+ps aux|grep svn
+svnserve -dr /data/svn/
+
+[导出日志]
+-进入到项目目录
+svn log -r {2016-3-15}:{2016-6-8} -v --xml --username tianchuhan --password tianchuhan123 E:\java\com.zundai > E:\java\com.zundai\zundai_svn.log
+
+[调用StatSVN统计]
+-cd statsvn 目录
+C:\statsvn>java -jar statsvn.jar E:\java\com.zundai\zundai_svn.log E:\java\com.zundai

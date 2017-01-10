@@ -1,0 +1,502 @@
+[Linux常用命令]
+------------------------------------------------------------------
+[查看系统几位]
+-----------------------------------------------------------------
+file /bin/ls
+
+[查看发型版本]
+cat /etc/issue
+
+-----------------------------------------------
+[查看linux是否虚拟机]
+cat /proc/scsi/scsi
+
+--开放端口
+------------------------------------------------------------------
+linux 端口管理文件:/etc/sysconfig/iptables
+/etc/init.d/iptables status
+--增加端口，8080
+/sbin/iptables -I INPUT -p tcp --dport 8080 -j ACCEPT
+--保存
+/etc/rc.d/init.d/iptables save
+--重启
+/etc/init.d/iptables restart
+
+也可以在/etc/sysconfig/iptables直接增加
+-A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+
+--删除文件
+-----------------------------------------------------------------
+删除文件夹实例：
+rm -rf /var/log/httpd/access
+将会删除/var/log/httpd/access目录以及其下所有文件、文件夹
+
+删除文件使用实例：
+rm -f /var/log/httpd/access.log
+将会强制删除/var/log/httpd/access.log这个文件
+
+删除当前目录下所有文件，慎用，一定确定当前是在删除的目标文件夹下：
+rm -rf *
+
+排除删除
+rm -rf `ls -I upload`
+
+#查找删除#
+find / -name "zun*" |xargs rm -rf
+
+--文件夹删去除了以下格式的文件外所以其它文件
+首先要打开extgolb选项：
+shopt -s extglob
+
+## 仅保留 file1 和 file2 文件## 
+rm -rf !(file1|file2)
+
+关闭 extglob 选项方法如下
+shopt -u extglob
+
+移动文件目录
+-------------------------------------------------------------------
+Linux当前目录所有文件移动到上一级目录
+mv * ../
+
+---文件上传下载
+rz:上传
+sz:下载
+
+--查找文件
+find / -name tnsnames.ora
+
+在当前目录搜索文件内容含有某字符串（忽略大小写）的特定文件：
+find . -type f -name '*.sh' | xargs grep -i 'your_string'
+
+------------------------------------------------------------------
+--解压缩命令
+------------------------------------------------------------------
+1.压缩命令：
+   命令格式：tar  -zcvf   压缩文件名.tar.gz   被压缩文件名
+   可先切换到当前目录下。压缩文件名和被压缩文件名都可加入路径。
+压缩：tar -czvf zundai_v5t_20160706.tar.gz zundai_v5t
+
+2.解压缩命令：
+    命令格式：tar  -zxvf   压缩文件名.tar.gz
+　　解压缩后的文件只能放在当前的目录。
+
+3.解压war包
+   jar -xvf game.war
+
+.tar 
+解包：tar xvf FileName.tar
+打包：tar cvf FileName.tar DirName
+（注：tar是打包，不是压缩！）
+———————————————
+.gz
+解压1：gunzip FileName.gz
+解压2：gzip -d FileName.gz
+压缩：gzip FileName
+
+.tar.gz 和 .tgz
+解压：tar zxvf FileName.tar.gz
+压缩：tar zcvf FileName.tar.gz DirName
+———————————————
+.bz2
+解压1：bzip2 -d FileName.bz2
+解压2：bunzip2 FileName.bz2
+压缩： bzip2 -z FileName
+
+.tar.bz2
+解压：tar jxvf FileName.tar.bz2
+压缩：tar jcvf FileName.tar.bz2 DirName
+———————————————
+.bz
+解压1：bzip2 -d FileName.bz
+解压2：bunzip2 FileName.bz
+压缩：未知
+
+.tar.bz
+解压：tar jxvf FileName.tar.bz
+压缩：未知
+———————————————
+.Z
+解压：uncompress FileName.Z
+压缩：compress FileName
+.tar.Z
+
+解压：tar Zxvf FileName.tar.Z
+压缩：tar Zcvf FileName.tar.Z DirName
+———————————————
+.zip
+解压：unzip FileName.zip
+压缩：zip FileName.zip DirName
+———————————————
+.rar
+解压：rar x FileName.rar
+压缩：rar a FileName.rar DirName
+———————————————
+.lha
+解压：lha -e FileName.lha
+压缩：lha -a FileName.lha FileName
+———————————————
+.rpm
+解包：rpm2cpio FileName.rpm | cpio -div
+———————————————
+.deb
+解包：ar p FileName.deb data.tar.gz | tar zxf -
+———————————————
+.tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar .ace .lha .lzh .lzx .lzs .arc .sda .sfx .lnx .zoo .cab .kar .cpt .pit .sit .sea
+解压：sEx x FileName.*
+压缩：sEx a FileName.* FileName
+
+---------------------------------------------------------------------
+远程登录
+---------------------------------------------------------------------
+ssh -l login_name hostname
+
+#ssh -l root -p 23100 192.168.101.211
+ 
+其中-l指用什么账号来登陆，-p是对方服务器的ssh端口，后面是对方服务器的ip地址
+
+
+[tomcat操作]
+-------------------------------------------------------------------
+
+
+[MySQL操作]
+------------------------------------------------------------------
+-启动
+/etc/init.d/mysqld start
+-停止
+/etc/init.d/mysqld stop
+-状态
+/etc/init.d/mysqld status
+-重启
+/etc/init.d/mysqld restart
+
+查找配置文件:
+mysql --help | grep my.cnf
+
+--配置文件
+/etc/my.cnf
+
+更改字符编码,在my.cnd中编辑
+------------------------------------------------------------------
+在[client]节点下添加
+default-character-set=utf8
+
+在[mysqld]节点下添加 
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+在[mysql]节点下添加 
+no-auto-rehash
+default-character-set=utf8
+
+mysql max_allowed_packet设置，防止sql语句过大报错
+编辑my.ini，在[mysqld]节点下添加
+----------------------------
+max_allowed_packet = 500M
+
+
+
+mysql常用命令
+-------------------------------------------------------------------
+显示字符编码:show variables like 'character%';
+
+增加列
+------------------------------------------------
+ALTER TABLE Hospital ADD AddrProv VARCHAR(32) DEFAULT '' AFTER Contact;
+ALTER TABLE Temporary ADD CreateTime datetime DEFAULT CURRENT_TIMESTAMP comment '创建时间' AFTER PatientID;
+
+删除列
+-----------------------------------------------
+ALTER TABLE Hospital DROP Area;
+
+显示table详细信息
+-----------------------------------------------
+desc 表名;
+
+
+status--查看状态
+
+linux下执行mysql的sql文件
+source /var/ftp/pub/sogoodsoft.sql;
+
+mysql日志文件
+/var/log/mysqld.log
+
+mysql:Set binary mode mysql
+在/etc/my.cnf的[mysql]节点添加
+binary-mode=1
+
+[mysql备份数据库]
+mysqldump -u root -padmin viilife > /usr/bak/mysqldata/viilife.sql
+或者
+/usr/bin/mysqldump -u root -padmin viilife | gzip > /usr/bak/mysqldata/viilife.sql.gz
+
+开启mysql远程访问
+---------------------------------------------------------------------------------------
+1、改表法：
+可能是你的帐号不允许从远程登陆，只能在localhost。这个时候只要在localhost的那台电脑，
+登入mysql后，更改 “mysql” 数据库里的 “user” 表里的 “host” 项，从“localhost”改称“%”
+
+x:\>mysql -u root -pvmware
+mysql> use mysql;
+mysql> update user set host = '%' where user = 'root';
+mysql> select host,user from user;
+mysql> flush privileges;
+注：mysql> flush privileges; 使修改生效。
+
+2、授权法：
+例如，你想myuser使用mypassword从任何主机连接到mysql服务器的话。
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'rootapt' WITH GRANT OPTION;
+如果你想允许用户myuser从ip为192.168.1.3的主机连接到mysql服务器，并使用mypassword作为密码
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.1.121'IDENTIFIED BY 'root123' WITH GRANT OPTION;
+------------------------------------------------------------------
+
+MongoDB
+http://www.w3cschool.cc/mongodb/mongodb-tutorial.html
+---------------------------------------------------------------------------------------------
+>连接
+mongo localhost
+>显示数据库
+show dbs
+>显示数据集
+show collections
+>显示当前数据库
+db
+>切换数据库,没有就创建
+use databaseName
+>查询
+db.TableName.find()
+
+
+SVN常用命令
+---------------------------------------------------------------------------
+关闭
+查到服务的进程号：
+ps -ef|grep svnserve
+4094 ?        00:00:00 svnserve
+关闭进程：kill -9 4094
+--------------------------------
+检测SVN 端口
+[root@localhost conf]#netstat -ln |grep 3690
+tcp  0  0 0.0.0.0:3690    0.0.0.0:*     LISTEN
+--------------------------------
+启动
+启动服务：
+[test@localhost svn]$ svnserve -d -r /home/svn
+netstat -ntlp看3690端口是否正常开放
+测试状态
+[test@localhost svn]$ svn info file:///home/test/svn/test/
+
+svn开机启动
+--------------------------------------
+1.创建执行脚本svn.sh（/root路径下），其内容很简单，如下：
+
+#!/bin/bash
+svnserve -d -r /home/svn
+
+2.添加可执行权限
+chmod ug+x svn.sh
+
+3.添加自动运行
+打开（vi或gedit）/etc/init.d/rc.d/rc.local，在最后添加一行内容如下：
+/root/svn.sh
+上面这种方式没有成功，可尝试如下方式
+/usr/local/bin/svnserve -d -r /home/svn --config-file /home/svn/conf/svnserve.conf
+/usr/local/bin/svnserve svnserve的命令脚本路径
+--config-file指定全局配置文件
+
+4.检查
+重启服务器，使用ps-ef看看svn进程是否启动了。嘿嘿，问题搞定了，以后开机就自动启动svn了。
+
+svn迁移
+----------------------------------------------------
+1、导出
+svnadmin dump viilife > E:\svndmp\viilife.dmp
+
+2、上传dmp文件到迁移服务器/home/viilife.dmp
+  创建项目目录： svnadmin create /home/svn/viilife
+  导入dmp:      svnadmin load /home/svn/viilife < /home/viilife.dmp 
+
+svn地址切换
+-----------------------------------------------------
+
+
+--------------------------------------------------
+tomcat
+--------------------------------------------------
+启动tomcat同时输出日志:
+./startup.sh;tail -f ../logs/catalina.out
+
+内存溢出
+linux下在catalina.sh文件最前面加入如下语句，这个文件在tomcat -->bin目录下。
+JAVA_OPTS='-Xms128m -Xmx512m  -XX:PermSize=128M -XX:MaxPermSize=256M'
+
+------------------------------------------------------------
+Apache Server
+------------------------------------------------------------
+Install Apache HTTP Server
+yum install httpd
+
+How to configure Apache Server on CentOS, RedHat, Linux
+1、Set the apache service to start on boot
+	chkconfig --levels 235 httpd on
+2、Enable name-based virtual hosting on port 80
+	Open the httpd configuration file located at /etc/httpd/conf/httpd.conf
+	Un-comment the line containing the text NameVirtualHost *:80
+	Save the file
+3、Restart the Apache HTTP Server daemon
+	service httpd restart
+Note: Ignore the "NameVirtualHost *:80 has no VirtualHosts" warning for now.
+网站目录为:/var/www/html
+
+linux定时任务的使用
+[crontab]
+--------------------------------------------------------------------------
+重启crontab
+/etc/rc.d/init.d/crond restart
+
+查看定时任务列表:
+crontab -l
+
+
+[VIM的使用]
+---------------------------------------------------------------------------
+--更改文件格式
+vim filename
+然后用命令
+:set ff?
+可以看到dos或unix的字样. 如果的确是dos格式的, 那么你可以用set ff=unix把它强制为unix格式的, 然后存盘退出.
+当SHELL程序报告command not found时, 总是去检查一下你的PATH里面有没有程序要用到的每一个命令(没指定绝对路径的那种). 你这么小的程序, 可以一行一行核对.
+
+[开放端口]
+-----------------------------------------------------------------------------
+lsof -i tcp:80
+ 
+列出所有端口
+ 
+netstat -ntlp
+ 
+1、开启端口（以80端口为例）
+ 
+      方法一：
+         /sbin/iptables -I INPUT -p tcp --dport 80 -j ACCEPT   写入修改
+         /etc/init.d/iptables save   保存修改
+        service iptables restart    重启防火墙，修改生效
+ 
+       方法二：
+       vi /etc/sysconfig/iptables  打开配置文件加入如下语句:
+       -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT   重启防火墙，修改完成
+2、关闭端口
+     方法一：
+         /sbin/iptables -I INPUT -p tcp --dport 80 -j DROP   写入修改
+         /etc/init.d/iptables save   保存修改
+        service iptables restart    重启防火墙，修改生效
+
+       方法二：
+       vi /etc/sysconfig/iptables  打开配置文件加入如下语句:
+       -A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j DROP   重启防火墙，修改完成
+3、查看端口状态
+      /etc/init.d/iptables status
+
+4、查找端口占用情况
+	netstat -tunlp |grep 8000
+netstat -apn | grep 8080
+
+[文件传输]
+----------------------------------------------------------
+1、从远程复制文件到本地目录。
+说明：从192.168.120.204机器上的/opt/soft/的目录中下载nginx-0.5.38.tar.gz 文件到本地/opt/soft/目录中
+$scp root@192.168.120.204:/opt/soft/nginx-0.5.38.tar.gz /opt/soft/
+
+2、从远程复制目录到本地目录。
+说明：从192.168.120.204机器上的/opt/soft/中下载mongodb 目录到本地的/opt/soft/目录来。
+$scp -r root@192.168.120.204:/opt/soft/mongodb /opt/soft/
+
+3、上传本地文件到远程目录。
+说明：复制本地opt/soft/目录下的文件nginx-0.5.38.tar.gz 到远程机器192.168.120.204的opt/soft/scptest目录
+$scp /opt/soft/nginx-0.5.38.tar.gz root@192.168.120.204:/opt/soft/scptest
+
+4、上传本地目录到远程目录。
+说明：上传本地目录 /opt/soft/mongodb到远程机器192.168.120.204上/opt/soft/scptest的目录中去
+$scp -r /opt/soft/mongodb root@192.168.120.204:/opt/soft/scptest
+
+[安装rpm包]
+-----------------------------------------------------------
+－ivh：安装显示安装进度--install--verbose--hash
+－Uvh：升级软件包--Update；
+－qpl：列出RPM软件包内的文件信息[Query Package list]；
+－qpi：列出RPM软件包的描述信息[Query Package install package(s)]；
+－qf：查找指定文件属于哪个RPM软件包[Query File]；
+－Va：校验所有的RPM软件包，查找丢失的文件[View Lost]；
+－e：删除包
+
+rpm -q samba //查询程序是否安装
+
+rpm -ivh  /media/cdrom/RedHat/RPMS/samba-3.0.10-1.4E.i386.rpm //按路径安装并显示进度
+rpm -ivh --relocate /=/opt/gaim gaim-1.3.0-1.fc4.i386.rpm    //指定安装目录
+
+rpm -ivh --test gaim-1.3.0-1.fc4.i386.rpm　　　 //用来检查依赖关系；并不是真正的安装；
+rpm -Uvh --oldpackage gaim-1.3.0-1.fc4.i386.rpm //新版本降级为旧版本
+
+rpm -qa | grep httpd　　　　　 ＃[搜索指定rpm包是否安装]--all搜索*httpd*
+rpm -ql httpd　　　　　　　　　＃[搜索rpm包]--list所有文件安装目录
+
+rpm -qpi Linux-1.4-6.i368.rpm　＃[查看rpm包]--query--package--install package信息
+rpm -qpf Linux-1.4-6.i368.rpm　＃[查看rpm包]--file
+rpm -qpR file.rpm　　　　　　　＃[查看包]依赖关系
+rpm2cpio file.rpm |cpio -div    ＃[抽出文件]
+
+rpm -ivh file.rpm 　＃[安装新的rpm]--install--verbose--hash
+rpm -ivh
+
+rpm -Uvh file.rpm    ＃[升级一个rpm]--upgrade
+rpm -e file.rpm      ＃[删除一个rpm包]--erase
+
+-----------------------------------------------------------------
+查看目录大小，例如：查看根目录"/"下的文件大小
+du -h --max-depth=1 /
+
+只查看当前目录的大小，而不察看其子目录大小：
+[root@localhost cjj]# du -sh ./
+7.8G ./
+[root@localhost cjj]# du -sh /usr/
+2.5G /usr/
+
+
+挂载[目录共享]
+-------
+mount -t none -o bind /usr/upload /uploadtmp
+/usr/upload挂载到uploadtmp,上传文件到uploadtmp,其实是上传到了/usr/upload目录
+mount --bind olddir newdir
+mount --move olddir newdir
+mount -t none -o bind /usr/indus_com/upload/ /usr/indus_pub/upload/
+
+中文man对 mount --bind解释如下
+mount --bind  olddir/ newdir/    #把newdir 作为olddird的一个镜像， 它们的内容完全1样。
+
+---------------------------------------------
+scp
+[从远程服务器下载文件]
+scp root@10.133.195.161:/tools/MySQL-shared-compat-5.6.21-1.el6.x86_64.rpm /yundate/tools/
+
+【crontab】
+	第三种 用crontab -e  进行编辑
+use the following command add entries to crontab should take effect right away.
+crontab -e 编辑
+crontab -l 查看
+
+如还不行就从其服务：
+处理方法：/etc/init.d/crond restart   
+
+【linux更改密码】
+passwd
+
+【删除，仍占用内存】
+	lsof | grep deleted
+把目标文件写为空或重启
+echo " " >/tmp/acess.log
+
+#更新日期#
+ntpdate -u ntp.api.bz
+asia.pool.ntp.org
